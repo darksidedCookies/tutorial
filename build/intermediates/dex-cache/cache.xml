@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/geekishmatt/AndroidStudioProjects/SpaceJet/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.2"
+        sha1="6735497f527f86810ea865ebca181a3ad866371c">
+        <dex dex="/Users/geekishmatt/AndroidStudioProjects/SpaceJet/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_90dd360c6c00f46e97cc15fd3e6038463f03ecf8/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/geekishmatt/AndroidStudioProjects/SpaceJet/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="26.0.2"
+        sha1="caff8e51a24901cfc9cd7e1cf83d84f4cb0c103b">
+        <dex dex="/Users/geekishmatt/AndroidStudioProjects/SpaceJet/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_09cb5b9b7010cb39e55f1eb8fb3dfacb8e5482d3/classes.dex" />
+    </item>
+
+</items>

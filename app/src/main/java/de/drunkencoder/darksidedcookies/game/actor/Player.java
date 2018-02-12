@@ -1,0 +1,34 @@
+package de.drunkencoder.darksidedcookies.game.actor;
+
+import de.drunkencoder.darksidedcookies.engine.actor.AbstractActor;
+import de.drunkencoder.darksidedcookies.engine.gameobject.GameObjectInterface;
+
+public class Player extends AbstractActor
+{
+    protected float velocity = 1.0f/100.0f;
+
+    public float getVelocity()
+    {
+        return this.velocity;
+    }
+
+    public float moveUp(float delta)
+    {
+        return 0.0f;
+    }
+
+    public float moveLeft(float delta)
+    {
+        return 0.0f;
+    }
+
+    public float moveRight(float delta)
+    {
+        return 0.0f;
+    }
+
+    public float moveDown(float delta)
+    {
+        return 0.0f;
+    }
+}
