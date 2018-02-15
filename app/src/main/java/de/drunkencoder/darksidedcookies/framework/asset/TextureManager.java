@@ -8,7 +8,22 @@ import android.opengl.GLUtils;
 
 public class TextureManager
 {
-    public static int loadTexture(final Context context, final int resourceId)
+    protected static TextureManager instance = null;
+    protected Context context;
+
+    public static TextureManager getInstance(Context context)
+    {
+        if(null == instance)
+            instance = new TextureManager(context);
+        return instance;
+    }
+
+    protected TextureManager(Context context)
+    {
+        this.context  = context;
+    }
+
+    public int loadTexture(int resourceId)
     {
         final int[] textureHandle = new int[1];
 
@@ -20,7 +35,7 @@ public class TextureManager
             options.inScaled = false;   // No pre-scaling
 
             // Read in the resource
-            final Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resourceId, options);
+            final Bitmap bitmap = BitmapFactory.decodeResource(this.context.getResources(), resourceId, options);
 
             // Bind to the texture in OpenGL
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, textureHandle[0]);

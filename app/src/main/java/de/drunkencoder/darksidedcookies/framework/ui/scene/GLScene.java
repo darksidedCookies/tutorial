@@ -8,16 +8,11 @@ public class GLScene extends GLSurfaceView implements SceneInterface
     protected Renderer renderer;
     protected Context context;
 
-    protected int screenX;
-    protected int screenY;
-
-    public GLScene(Context context, int screenX, int screenY)
+    public GLScene(Context context)
     {
         super(context);
         setEGLContextClientVersion(2);
         this.context = context;
-        this.screenX = screenX;
-        this.screenY = screenY;
     }
 
     public void setRenderer(Renderer renderer)
@@ -30,15 +25,5 @@ public class GLScene extends GLSurfaceView implements SceneInterface
     public void setOnTouchListener(OnTouchListener listener)
     {
         super.setOnTouchListener(listener);
-    }
-
-    public int getScreenX()
-    {
-        return this.screenX;
-    }
-
-    public int getScreenY()
-    {
-        return this.screenY;
     }
 }

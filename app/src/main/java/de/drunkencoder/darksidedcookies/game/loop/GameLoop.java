@@ -10,21 +10,16 @@ import de.drunkencoder.darksidedcookies.engine.frame.GameFrame;
 import de.drunkencoder.darksidedcookies.engine.frame.GameFrameDataInterface;
 import de.drunkencoder.darksidedcookies.engine.physics.CollisionDetection;
 import de.drunkencoder.darksidedcookies.framework.loop.BaseGameLoop;
-import de.drunkencoder.darksidedcookies.framework.ui.receiver.BaseReceiver;
 import de.drunkencoder.darksidedcookies.game.actor.Asteroid;
 import de.drunkencoder.darksidedcookies.game.actor.Player;
 import de.drunkencoder.darksidedcookies.game.frame.GameFrameData;
+import de.drunkencoder.darksidedcookies.game.ui.receiver.GameReceiver;
 
 public class GameLoop extends BaseGameLoop
 {
-    protected int screenX;
-    protected int screenY;
-
-    public GameLoop(Context context, BaseReceiver receiver, int screenX, int screenY)
+    public GameLoop(Context context, GameReceiver receiver)
     {
         super(context, receiver);
-        this.screenX = screenX;
-        this.screenY = screenY;
     }
 
     public GameFrame run()
@@ -96,7 +91,7 @@ public class GameLoop extends BaseGameLoop
         ActorInterface playerActor = new Player();
 
         float y = oldPlayerData.getY() + (
-                ((this.receiver.isUp()) ? -playerActor.getVelocity() : (this.receiver.isDown()) ? playerActor.getVelocity() : 0.0f)
+                ((((GameReceiver)this.receiver).isUp()) ? -playerActor.getVelocity() : (((GameReceiver)this.receiver).isDown()) ? playerActor.getVelocity() : 0.0f)
         );
 
         if(this.detectOutOfScreen(oldPlayerData)) {

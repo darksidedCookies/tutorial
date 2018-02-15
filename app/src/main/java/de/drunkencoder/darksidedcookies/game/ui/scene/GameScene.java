@@ -6,24 +6,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 
+import de.drunkencoder.darksidedcookies.framework.asset.MediaManager;
 import de.drunkencoder.darksidedcookies.framework.ui.scene.GLScene;
 import de.drunkencoder.darksidedcookies.game.ui.GameOverActivity;
 import de.drunkencoder.darksidedcookies.game.ui.renderer.GameRenderer;
 
 public class GameScene extends GLScene
 {
-    public GameScene(Context context, int screenX, int screenY)
+    public GameScene(Context context)
     {
-        super(context, screenX, screenY);
+        super(context);
 
         this.setRenderer(
-                new GameRenderer(context, screenX, screenY)
+                new GameRenderer(context)
         );
         this.setOnTouchListener(
                 new de.drunkencoder.darksidedcookies.framework.ui.listener.OnTouchListener(context)
         );
 
-        RendererReceiver receiver = new RendererReceiver(this);
+        GameOverReceiver receiver = new GameOverReceiver(this);
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, new IntentFilter("gameover"));
     }
 
@@ -36,11 +37,11 @@ public class GameScene extends GLScene
 }
 
 
-class RendererReceiver extends BroadcastReceiver
+class GameOverReceiver extends BroadcastReceiver
 {
     private GameScene gameScene;
 
-    public RendererReceiver(GameScene gameScene)
+    public GameOverReceiver(GameScene gameScene)
     {
         this.gameScene = gameScene;
     }
@@ -48,6 +49,9 @@ class RendererReceiver extends BroadcastReceiver
     @Override
     public void onReceive(Context context, Intent intent)
     {
+        MediaManager mediaManager = MediaManager.getInstance(context);
+        mediaManager.stop("gameon");
+        mediaManager.play("gameover");
         this.gameScene.stop();
     }
 }

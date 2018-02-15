@@ -11,7 +11,16 @@ public class MediaManager
     protected Context context;
     protected Map<String, MediaPlayer> mediaPlayer;
 
-    public MediaManager(Context context)
+    private static MediaManager instance = null;
+
+    public static MediaManager getInstance(Context context)
+    {
+        if(null == instance)
+            instance = new MediaManager(context);
+        return instance;
+    }
+
+    protected MediaManager(Context context)
     {
         this.context  = context;
         this.mediaPlayer = new HashMap<>();
@@ -28,6 +37,15 @@ public class MediaManager
     {
         if(this.mediaPlayer.containsKey(name))
             this.mediaPlayer.get(name).start();
+    }
+
+    public void loop(String name)
+    {
+        if(this.mediaPlayer.containsKey(name))
+        {
+            this.mediaPlayer.get(name).setLooping(true);
+            this.mediaPlayer.get(name).start();
+        }
     }
 
 

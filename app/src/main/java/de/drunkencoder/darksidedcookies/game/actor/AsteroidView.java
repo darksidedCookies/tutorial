@@ -12,14 +12,18 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import de.drunkencoder.darksidedcookies.framework.actor.ActorViewInterface;
+import de.drunkencoder.darksidedcookies.framework.asset.TextureManager;
 import de.drunkencoder.darksidedcookies.game.R;
 
 public class AsteroidView implements ActorViewInterface
 {
+    protected Context context;
+
     protected final float[] verticesData;
     protected final short[] drawOrder;
 
-    protected final FloatBuffer playerVertices;
+    protected FloatBuffer texCoordBuffer;
+    protected final FloatBuffer asteroidVertices;
     protected final ShortBuffer drawList;
 
     protected final int bytesPerFloat = 4;
@@ -30,10 +34,10 @@ public class AsteroidView implements ActorViewInterface
     protected final int colorOffset = 3;
     protected final int colorDataSize = 4;
 
-    protected final int[] textureHandle = new int[1];
-
-    public AsteroidView()
+    public AsteroidView(Context context)
     {
+        this.context = context;
+
         float r = 0.0f;
         float g = 0.0f;
         float b = 1.0f;
@@ -52,15 +56,18 @@ public class AsteroidView implements ActorViewInterface
         };
 
 
+        float texCoords[] = {0,1, 1,1, 0,0, 1,0};
+        this.texCoordBuffer = ByteBuffer.allocateDirect(texCoords.length * 4).order(ByteOrder.nativeOrder()).asFloatBuffer();
+        this.texCoordBuffer.put(texCoords).position(0);
+
         // Form festlegen (je 3 bilden Dreieck, gegen Uhrzeigersinn)
         drawOrder = new short[]{ 0, 1, 2, 0, 2, 3 };
 
-
         // Buffer definieren (Zur Konvertierung in C++)
-        playerVertices = ByteBuffer.allocateDirect(verticesData.length * bytesPerFloat)
+        asteroidVertices = ByteBuffer.allocateDirect(verticesData.length * bytesPerFloat)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
 
-        playerVertices.put(verticesData).position(0);
+        asteroidVertices.put(verticesData).position(0);
 
 
         drawList = ByteBuffer.allocateDirect(drawOrder.length * bytesPerShort)
@@ -70,21 +77,24 @@ public class AsteroidView implements ActorViewInterface
     }
 
     @Override
-    public void draw(float[] matrix, int pos, int col, int mvp)
+    public void draw(float[] matrix, int pos, int col, int mvp, int textureHandle)
     {
         // Position holen
-        playerVertices.position(positionOffset);
+        asteroidVertices.position(positionOffset);
         GLES20.glVertexAttribPointer(pos, positionDataSize, GLES20.GL_FLOAT, false,
-                strideBytes, playerVertices);
+                strideBytes, asteroidVertices);
         GLES20.glEnableVertexAttribArray(pos);
 
-
-
-        // Farbe holen
-        playerVertices.position(colorOffset);
+        asteroidVertices.position(colorOffset);
         GLES20.glVertexAttribPointer(col, colorDataSize, GLES20.GL_FLOAT, false,
-                strideBytes, playerVertices);
+                strideBytes, asteroidVertices);
         GLES20.glEnableVertexAttribArray(col);
+
+        /*
+        GLES20.glVertexAttribPointer(textureHandle, 2, GLES20.GL_FLOAT, false, 0, texCoordBuffer);
+        GLES20.glEnableVertexAttribArray(textureHandle);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, TextureManager.getInstance(this.context).loadTexture(R.drawable.asteroid));
+        */
 
         // Zeichnen
         GLES20.glUniformMatrix4fv(mvp, 1, false, matrix, 0);

@@ -7,6 +7,4 @@ import android.content.Intent;
 abstract public class BaseReceiver extends BroadcastReceiver
 {
     abstract public void onReceive(Context context, Intent intent);
-    abstract public boolean isUp();
-    abstract public boolean isDown();
 }

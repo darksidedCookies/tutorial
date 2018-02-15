@@ -15,6 +15,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import de.drunkencoder.darksidedcookies.engine.frame.GameFrame;
 import de.drunkencoder.darksidedcookies.engine.frame.GameFrameDataInterface;
+import de.drunkencoder.darksidedcookies.framework.asset.MediaManager;
 import de.drunkencoder.darksidedcookies.game.loop.GameLoop;
 import de.drunkencoder.darksidedcookies.framework.actor.ActorViewInterface;
 import de.drunkencoder.darksidedcookies.framework.entity.EntityViewInterface;
@@ -29,6 +30,7 @@ public class GameRenderer extends BaseGameRenderer
     protected int mvpMatrixHandle;
     protected int positionHandle;
     protected int colorHandle;
+    protected int textureHandle;
 
     protected float[] modelMatrix = new float[16];
     protected float[] viewMatrix = new float[16];
@@ -44,14 +46,14 @@ public class GameRenderer extends BaseGameRenderer
     protected GameFrame lastFrame;
     protected GameFrame currentFrame;
 
-    public GameRenderer(Context context, int screenX, int screenY)
+    public GameRenderer(Context context)
     {
         this.context = context;
-        this.gameLoop = new GameLoop(this.context, new GameReceiver(), screenX, screenY);
+        this.gameLoop = new GameLoop(this.context, new GameReceiver());
         this.currentFrame = this.gameLoop.run();
 
-        this.addActorView("Player", new PlayerView());
-        this.addActorView("Asteroid", new AsteroidView());
+        this.addActorView("Player", new PlayerView(context));
+        this.addActorView("Asteroid", new AsteroidView(context));
     }
 
 
@@ -140,6 +142,7 @@ public class GameRenderer extends BaseGameRenderer
     protected void initBackground()
     {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        GLES20.glEnable(GLES20.GL_TEXTURE_2D);
     }
 
     protected void initCamera()
@@ -165,13 +168,28 @@ public class GameRenderer extends BaseGameRenderer
                 "uniform mat4 u_MVPMatrix;      \n"        // A constant representing the combined model/view/projection matrix.
                         + "attribute vec4 a_Position;     \n"        // Per-vertex position information we will pass in.
                         + "attribute vec4 a_Color;        \n"        // Per-vertex color information we will pass in.
+                        + "attribute vec2 aTextureCoord;  \n"
+                        + "varying vec2 vTextureCoord;    \n"
                         + "varying vec4 v_Color;          \n"        // This will be passed into the fragment shader.
                         + "void main()                    \n"        // The entry point for our vertex shader.
                         + "{                              \n"
                         + "   v_Color = a_Color;          \n"        // Pass the color through to the fragment shader.
                         + "   gl_Position = u_MVPMatrix   \n"    // gl_Position is a special variable used to store the final position.
                         + "               * a_Position;   \n"     // Multiply the vertex by the matrix to get the final point in
+                        + " vTextureCoord = aTextureCoord;\n"
                         + "}                              \n";    // normalized screen coordinates.
+
+        /*
+                final String fragmentShader =
+                "precision mediump float;       \n"        // Set the default precision to medium. We don't need as high of a
+                        + "varying vec4 v_Color;          \n"        // This is the color from the vertex shader interpolated across the
+                        + "varying vec2 vTextureCoord;    \n"
+                        + "uniform sampler2D uSampler;    \n"
+                        + "void main()                    \n"        // The entry point for our fragment shader.
+                        + "{                              \n"
+                        + "   gl_FragColor = texture2D(uSampler, vec2(vTextureCoord.s, vTextureCoord.t));     \n"        // Pass the color directly through the pipeline.
+                        + "}                              \n";
+         */
 
         final String fragmentShader =
                 "precision mediump float;       \n"        // Set the default precision to medium. We don't need as high of a
@@ -197,6 +215,7 @@ public class GameRenderer extends BaseGameRenderer
 
         GLES20.glBindAttribLocation(programHandle, 0, "a_Position");
         GLES20.glBindAttribLocation(programHandle, 1, "a_Color");
+        GLES20.glBindAttribLocation(programHandle, 2, "aTextureCoord");
 
         GLES20.glLinkProgram(programHandle);
 
@@ -211,6 +230,10 @@ public class GameRenderer extends BaseGameRenderer
 
         this.setColorHandle(
                 GLES20.glGetAttribLocation(programHandle, "a_Color")
+        );
+
+        this.setTextureHandle(
+                GLES20.glGetAttribLocation(programHandle, "aTextureCoord")
         );
 
         GLES20.glUseProgram(programHandle);
@@ -231,6 +254,11 @@ public class GameRenderer extends BaseGameRenderer
         this.colorHandle = colorHandle;
     }
 
+    protected void setTextureHandle(int textureHandle)
+    {
+        this.textureHandle = textureHandle;
+    }
+
     protected float[] getViewMatrix()
     {
         return this.viewMatrix;
@@ -246,6 +274,6 @@ public class GameRenderer extends BaseGameRenderer
         Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0);
         Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0);
 
-        gameObjectView.draw(mvpMatrix, positionHandle, colorHandle, mvpMatrixHandle);
+        gameObjectView.draw(mvpMatrix, positionHandle, colorHandle, mvpMatrixHandle, textureHandle);
     }
 }

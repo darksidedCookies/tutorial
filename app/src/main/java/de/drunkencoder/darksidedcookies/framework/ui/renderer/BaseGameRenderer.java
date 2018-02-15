@@ -7,7 +7,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 abstract public class BaseGameRenderer implements GLSurfaceView.Renderer
 {
-
     @Override
     abstract public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig);
 

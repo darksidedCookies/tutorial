@@ -9,16 +9,12 @@ public class SceneManager implements Runnable
     protected Thread gameThread;
 
     protected Context context;
-    protected int screenX;
-    protected int screenY;
 
     protected SceneInterface currentScene;
 
-    public SceneManager(Context context, int screenX, int screenY, SceneInterface scene)
+    public SceneManager(Context context, SceneInterface scene)
     {
         this.context = context;
-        this.screenX = screenX;
-        this.screenY = screenY;
         this.currentScene = scene;
     }
 
@@ -72,7 +68,7 @@ public class SceneManager implements Runnable
     public SceneInterface getScene()
     {
         if(null == this.currentScene)
-            this.currentScene = new GLScene(this.context, this.screenX, this.screenY);
+            this.currentScene = new GLScene(this.context);
 
         return this.currentScene;
     }

@@ -10,37 +10,36 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import de.drunkencoder.darksidedcookies.framework.asset.MediaManager;
 import de.drunkencoder.darksidedcookies.game.R;
 
 
-public class MainActivity extends Activity implements View.OnClickListener {
-
-    // play image button
+public class MainActivity extends Activity implements View.OnClickListener
+{
     private ImageButton buttonPlay;
-    //high score button
-    private ImageButton buttonScore;
+    private MediaManager mediaManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        this.setContentView(R.layout.activity_main);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
-        //setting the orientation to landscape
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        this.mediaManager = MediaManager.getInstance(this);
+        this.mediaManager.add("gameon", R.raw.gameon);
+        this.mediaManager.add("gameover", R.raw.gameover);
 
-        //getting the button
-        buttonPlay = (ImageButton) findViewById(R.id.buttonPlay);
+        this.buttonPlay = (ImageButton) findViewById(R.id.buttonPlay);
+        this.buttonPlay.setOnClickListener(this);
 
-        //setting the on click listener to play now button
-        buttonPlay.setOnClickListener(this);
+        this.mediaManager.loop("gameon");
     }
 
-    // the onclick methods
     @Override
     public void onClick(View v)
     {
-        if (v == buttonPlay) {
-            //the transition from MainActivity to GameActivity
+        if (v == this.buttonPlay) {
             startActivity(new Intent(MainActivity.this, GameActivity.class));
         }
     }
@@ -51,8 +50,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
         builder.setMessage("Are you sure you want to exit?")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-//                        GameView.stopMusic();
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        MediaManager mediaManager = MediaManager.getInstance(null);
+                        mediaManager.stop("gameon");
                         Intent startMain = new Intent(Intent.ACTION_MAIN);
                         startMain.addCategory(Intent.CATEGORY_HOME);
                         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -67,7 +68,5 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 });
         AlertDialog alert = builder.create();
         alert.show();
-
     }
-
 }
